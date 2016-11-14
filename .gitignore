@@ -1,3 +1,13 @@
+# Local environment
+.env
+.DS_Store
+
+# Virtual Environment files
+venv/
+
+# Vagrant
+.vagrant
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
