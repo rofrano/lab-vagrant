@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Hit Me Service
+
+Example used to show how easy it is to create a simple microservice
+using Python and Flask that leverages a Redis database
+"""
+
 import os
 from redis import Redis
 from flask import Flask, jsonify, request, url_for
