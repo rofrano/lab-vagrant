@@ -1,12 +1,9 @@
-# Local environment
-.env
+# Pesky OS metadata files that we don't need
 .DS_Store
+Thumbs.db
 
-# Virtual Environment files
-venv/
-
-# Vagrant
-.vagrant
+# Hidden Vagrant folder
+.vagrant/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

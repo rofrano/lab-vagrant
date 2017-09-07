@@ -14,32 +14,30 @@
 
 import os
 from redis import Redis
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, url_for
 
 # Create Flask application
 app = Flask(__name__)
 
 # Get bindings from the environment
-debug = (os.getenv('DEBUG', 'False') == 'True')
-port = os.getenv('PORT', '5000')
-hostname = os.getenv('HOSTNAME', '127.0.0.1')
-redis_port = os.getenv('REDIS_PORT', '6379')
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+PORT = os.getenv('PORT', '5000')
+HOSTNAME = os.getenv('HOSTNAME', '127.0.0.1')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
 
 # Application Routes
 
-######################################################################
-# GET /
-######################################################################
 @app.route('/')
 def index():
-    hits_url = request.base_url + 'hits'
-    return jsonify(name='Hit Me Service', version='1.0', url=hits_url), 200
+    """ Returns a message about the service """
+    return jsonify(name='Hit Me Service',
+                   version='1.0',
+                   url=url_for('hits', _external=True)
+                  ), 200
 
-######################################################################
-# GET /hits
-######################################################################
 @app.route('/hits')
 def hits():
+    """ Increments the counter each time calls """
     redis.incr('hit_counter')
     count = redis.get('hit_counter')
     return jsonify(hits=count), 200
@@ -49,5 +47,8 @@ def hits():
 #   M A I N
 ######################################################################
 if __name__ == "__main__":
-    redis = Redis(host=hostname, port=int(redis_port))
-    app.run(host='0.0.0.0', port=int(port), debug=debug)
+    print "============================================"
+    print "   H I T   C O U N T E R   S E R V I C E "
+    print "============================================"
+    redis = Redis(host=HOSTNAME, port=int(REDIS_PORT))
+    app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
