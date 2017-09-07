@@ -42,18 +42,18 @@ environment configured exactly the same way every time.
 
 ```ruby
       config.vm.provision "shell", inline: <<-SHELL
-      apt-get update
-      apt-get install -y git python-pip python-dev build-essential
-      apt-get -y autoremove
-      # Install app dependencies
-      cd /vagrant
-      sudo pip install -r requirements.txt
-      # Prepare Redis data share
-      mkdir -p /var/lib/redis/data
-      chown ubuntu:ubuntu /var/lib/redis/data
-      # Make vi look nice ;-)
-      sudo -H -u ubuntu echo "colorscheme desert" > ~/.vimrc
-    SHELL
+        apt-get update
+        apt-get install -y git python-pip python-dev build-essential
+        apt-get -y autoremove
+        # Install app dependencies
+        cd /vagrant
+        sudo pip install -r requirements.txt
+        # Prepare Redis data share
+        mkdir -p /var/lib/redis/data
+        chown ubuntu:ubuntu /var/lib/redis/data
+        # Make vi look nice ;-)
+        sudo -H -u ubuntu echo "colorscheme desert" > ~/.vimrc
+      SHELL
 ```
 
 ### Provision Docker containers for Redis
