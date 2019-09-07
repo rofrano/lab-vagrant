@@ -100,8 +100,11 @@ Vagrant.configure("2") do |config|
   # Add Redis docker container
   config.vm.provision "docker" do |d|
     d.pull_images "redis:alpine"
-    d.run "redis:alpine",
-      args: "--restart=always -d --name redis -h redis -p 6379:6379 -v /var/lib/redis/data:/data"
+    d.run "redis",
+      image: "redis:alpine",
+      args: "-h redis -p 6379:6379 -v /var/lib/redis/data:/data",
+      restart: "always",
+      daemonize: true
   end
 
 
