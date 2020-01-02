@@ -42,18 +42,17 @@ environment configured exactly the same way every time.
 
 ```ruby
       config.vm.provision "shell", inline: <<-SHELL
+        # Update and install
         apt-get update
-        apt-get install -y git python-pip python-dev build-essential
+        apt-get install -y git tree python3-dev python3-pip python3-venv apt-transport-https
+        apt-get upgrade python3
         apt-get -y autoremove
+
         # Install app dependencies
         cd /vagrant
-        sudo pip install -r requirements.txt
-        # Prepare Redis data share
-        mkdir -p /var/lib/redis/data
-        chown ubuntu:ubuntu /var/lib/redis/data
-        # Make vi look nice ;-)
-        sudo -H -u ubuntu echo "colorscheme desert" > ~/.vimrc
+        pip3 install -r requirements.txt
       SHELL
+
 ```
 
 ### Provision Docker containers for Redis
@@ -64,7 +63,7 @@ provision our **Redis** database using Docker.
     config.vm.provision "docker" do |d|
       d.pull_images "redis:alpine"
       d.run "redis:alpine",
-        args: "--restart=always -d --name redis -h redis -p 6379:6379 -v /var/lib/redis/data:/data"
+        args: "--restart=always -d --name redis -h redis -p 6379:6379 -v redis_data:/data"
     end
 ```
 
@@ -75,7 +74,7 @@ Once you have used `vagrant up` to start the vm use:
 ```shell
     vagrant ssh
     cd /vagrant
-    python app.py
+    python3 app.py
 ```
 
 You should now be able to test the application with the following URL:
