@@ -6,8 +6,9 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
+  #config.vm.box = "bento/ubuntu-18.04"
   config.vm.box = "ubuntu/bionic64"
-  config.vm.box_version = "20200206.0.0"
+  #config.vm.box_version = "20200206.0.0"
   config.vm.hostname = "devops"
 
   config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
