@@ -1,26 +1,42 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
+# This Vagrantfile can be used with VirtualBox or Docker as a provider
+# VirtualBox will be the default. To use Docker type:
+#
+#     vagrant up --provider=docker
+#
 Vagrant.configure("2") do |config|
-  #config.vm.box = "bento/ubuntu-18.04"
-  config.vm.box = "ubuntu/bionic64"
-  #config.vm.box_version = "20200206.0.0"
+  # config.vm.box = "ubuntu/bionic64"
+  # config.vm.box_version = "20200206.0.0"
+  config.vm.box = "bento/ubuntu-20.04"
   config.vm.hostname = "devops"
 
   config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
   config.vm.network "private_network", ip: "192.168.33.10"
 
-  config.vm.provider "virtualbox" do |vb|
+  ############################################################
+  # Provider for VirtualBox
+  ############################################################
+  config.vm.provider :virtualbox do |vb|
     vb.memory = "512"
     vb.cpus = 1
 
     # Fixes some DNS issues on some networks
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+  end
+
+  ############################################################
+  # Provider for Docker
+  ############################################################
+  config.vm.provider :docker do |docker, override|
+    override.vm.box = nil
+    docker.image = "rofrano/vagrant:ubuntu"
+    docker.name = "vagrant-docker"
+    docker.remains_running = true
+    docker.has_ssh = true
+    docker.create_args = ['--privileged']
   end
 
   ############################################################
@@ -51,7 +67,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     # Update and install
     apt-get update
-    apt-get install -y git tree python3-dev python3-pip python3-venv apt-transport-https
+    apt-get install -y vim git tree python3-dev python3-pip python3-venv apt-transport-https
     apt-get upgrade python3
     apt-get -y autoremove
 
@@ -75,7 +91,7 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Add Redis docker container
-  config.vm.provision "docker" do |d|
+  config.vm.provision :docker do |d|
     d.pull_images "redis:alpine"
     d.run "redis",
       image: "redis:alpine",

@@ -14,6 +14,23 @@ This all each developer needs to do to get a consistent development environment 
     vagrant up
 ```
 
+### Note: Apple M1 Chip Owners
+
+If you are _lucky / unluckly_ enough to have a new 2020 Mac with the **Apple M1 chip** which is based on **ARM** architecture, you CANNOT use VirtualBox because VirtualBox requires an **Intel** architecture processor to run. The good news is that [Docker](https://www.docker.com) has introduced the [Apple M1 Tech Preview](https://docs.docker.com/docker-for-mac/apple-m1/) that runs Docker on Macs that have the Apple M1 chip. By using Docker as a provider for Vagrant, we can simulate the same experience as developers using Vagrant with VirtualBox.
+
+To use **Docker** as your provider use:
+
+```sh
+vagrant up --provider=docker
+```
+
+This will use a Docker image that I have prepared for use with Vagrant. If you get an error that _Docker is not running on the guest VM_ just re-provision again lits this:
+
+```sh
+vagrant up --provision
+```
+I haven't found a fix for this yet but Docker usually works the second time provisioning is run.
+
 ## Additions to Vagrantfile
 
 The following additions were made to the `Vagrantfile` to auto provision a complete development environment:
