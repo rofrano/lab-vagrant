@@ -76,13 +76,10 @@ Vagrant.configure("2") do |config|
     sudo -H -u vagrant sh -c 'echo ". ~/venv/bin/activate" >> ~/.profile'
     sudo -H -u vagrant sh -c '. ~/venv/bin/activate && cd /vagrant && pip install -r requirements.txt'
 
-    # Install app dependencies
-    # cd /vagrant
-    # pip3 install -r requirements.txt
   SHELL
 
   ######################################################################
-  # Add Redis docker container
+  # Add Redis database as a docker container
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
     # Prepare Redis data share
