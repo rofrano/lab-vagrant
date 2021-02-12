@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :docker do |docker, override|
     override.vm.box = nil
     docker.image = "rofrano/vagrant:ubuntu"
-    docker.name = "vagrant-docker"
+    #docker.name = "vagrant-docker"
     docker.remains_running = true
     docker.has_ssh = true
     docker.create_args = ['--privileged']
@@ -88,13 +88,9 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Add Redis docker container
-  config.vm.provision :docker do |d|
+  config.vm.provision "docker" do |d|
     d.pull_images "redis:alpine"
-    d.run "redis",
-      image: "redis:alpine",
-      args: "-h redis -p 6379:6379 -v /var/lib/redis/data:/data",
-      restart: "always",
-      daemonize: true
+    d.run "redis:alpine",
+      args: "--restart=always -d --name redis -h redis -p 6379:6379 -v /var/lib/redis/data:/data"
   end
-
 end

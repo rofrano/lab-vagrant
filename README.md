@@ -24,18 +24,26 @@ To use **Docker** as your provider use:
 vagrant up --provider=docker
 ```
 
-This will use a Docker image that I have prepared for use with Vagrant. If you get an error that _Docker is not running on the guest VM_ just re-provision again lits this:
+This will use a Docker image that I have prepared for use with Vagrant. Unfortunately, you will get the following error:
 
 ```sh
-vagrant up --provision
+Docker is not running on the guest VM.
 ```
-I haven't found a fix for this yet but Docker usually works the second time provisioning is run.
+
+I haven't figured out why this happens but it only happens when creating the container initially. To fix it, just run the following command:
+
+```sh
+vagrant provision
+```
+
+This will reprovision and pull down the Redis container and complete successfully.
 
 ## Additions to Vagrantfile
 
 The following additions were made to the `Vagrantfile` to auto provision a complete development environment:
 
 ### Forward ports from vm to host
+
 Our Python Flask apps listens on port `5000` by default so we need to forward the port from
 inside the VM to our workstation so that we can access it with our browser.
 
@@ -44,6 +52,7 @@ inside the VM to our workstation so that we can access it with our browser.
 ```
 
 ### Control the vm memory and cpus
+
 Python Flask is very light weight and should only need a minimal VM.
 
 ```ruby
@@ -54,6 +63,7 @@ Python Flask is very light weight and should only need a minimal VM.
 ```
 
 ### Set up development environment
+
 Installing all of the dependencies with Vagrant ensures that everyone gets the same
 environment configured exactly the same way every time.
 
@@ -73,6 +83,7 @@ environment configured exactly the same way every time.
 ```
 
 ### Provision Docker containers for Redis
+
 **Vagrant** supports **Docker** natively so let's take advantage of that and
 provision our **Redis** database using Docker.
 
@@ -91,7 +102,7 @@ Once you have used `vagrant up` to start the vm use:
 ```shell
     vagrant ssh
     cd /vagrant
-    python3 app.py
+    python app.py
 ```
 
 You should now be able to test the application with the following URL:
