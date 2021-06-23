@@ -6,9 +6,20 @@
 #
 #     vagrant up --provider=docker
 #
+require 'yaml'
+
+CONFIG_FILE = File.join(File.expand_path(__FILE__), 'config', 'vagrant.yaml')
+VM_CONFIG   = {
+  memory: 512,
+  cpus: 1,
+}
+
+if File.exist?(CONFIG_FILE)
+  VM_CONFIG = YAML.load_file(CONFIG_FILE)
+end
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
-  # config.vm.box_version = "20200206.0.0"
   config.vm.hostname = "ubuntu"
 
   config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
@@ -18,8 +29,8 @@ Vagrant.configure("2") do |config|
   # Provider for VirtualBox
   ############################################################
   config.vm.provider :virtualbox do |vb|
-    vb.memory = "512"
-    vb.cpus = 1
+    vb.memory = VM_CONFIG[:memory]
+    vb.cpus   = VM_CONFIG[:cpus]
 
     # Fixes some DNS issues on some networks
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
