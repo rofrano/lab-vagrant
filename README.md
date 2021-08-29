@@ -16,7 +16,9 @@ This all each developer needs to do to get a consistent development environment 
 
 ### Note: Apple M1 Chip Owners
 
-If you are _lucky / unluckly_ enough to have a new 2020 Mac with the **Apple M1 chip** which is based on **ARM** architecture, you CANNOT use VirtualBox because VirtualBox requires an **Intel** architecture processor to run. The good news is that [Docker](https://www.docker.com) has introduced the [Apple M1 Tech Preview](https://docs.docker.com/docker-for-mac/apple-m1/) that runs Docker on Macs that have the Apple M1 chip. By using Docker as a provider for Vagrant, we can simulate the same experience as developers using Vagrant with VirtualBox.
+If you are _lucky_ enough to have a new 2020 Mac with the **Apple M1 chip** which is based on **ARM** architecture, you CANNOT use VirtualBox because VirtualBox requires an **Intel** architecture processor to run. 
+
+The good news is that [Docker](https://www.docker.com) has introduced the [Docker Desktop for Apple silicon](https://docs.docker.com/desktop/mac/apple-silicon/) that runs Docker on Macs that have the Apple M1 chip. By using Docker as a provider for Vagrant, we can simulate the same experience as developers using Vagrant with VirtualBox.
 
 To use **Docker** as your provider use:
 
@@ -24,19 +26,7 @@ To use **Docker** as your provider use:
 vagrant up --provider=docker
 ```
 
-This will use a Docker image that I have prepared for use with Vagrant. Unfortunately, you will get the following error:
-
-```sh
-Docker is not running on the guest VM.
-```
-
-I haven't figured out why this happens but it only happens when creating the container initially. To fix it, just run the following command:
-
-```sh
-vagrant provision
-```
-
-This will reprovision and pull down the Redis container and complete successfully.
+This will use a Docker image that I have prepared for use with Vagrant. You can do this even if you are on an Intel Mac providing you have Docker installed. If you get an error that Docker is not running, don't forget to start Docker and run the command again.
 
 ## Additions to Vagrantfile
 
@@ -68,18 +58,21 @@ Installing all of the dependencies with Vagrant ensures that everyone gets the s
 environment configured exactly the same way every time.
 
 ```ruby
-      config.vm.provision "shell", inline: <<-SHELL
-        # Update and install
-        apt-get update
-        apt-get install -y git tree python3-dev python3-pip python3-venv apt-transport-https
-        apt-get upgrade python3
-        apt-get -y autoremove
+  config.vm.provision "shell", inline: <<-SHELL
+    # Update and install
+    apt-get update
+    apt-get install -y vim git tree python3-dev python3-pip python3-venv apt-transport-https
+    apt-get upgrade python3
+    apt-get -y autoremove
 
-        # Install app dependencies
-        cd /vagrant
-        pip3 install -r requirements.txt
-      SHELL
-
+    # Create a Python3 Virtual Environment and Activate it in .profile
+    sudo -H -u vagrant sh -c 'python3 -m venv ~/venv'
+    sudo -H -u vagrant sh -c 'echo ". ~/venv/bin/activate" >> ~/.profile'
+    
+    # Install app dependencies in virtual environment as vagrant user
+    sudo -H -u vagrant sh -c '. ~/venv/bin/activate && pip install -U pip && pip install wheel'
+    sudo -H -u vagrant sh -c '. ~/venv/bin/activate && cd /vagrant && pip install -r requirements.txt'    
+  SHELL
 ```
 
 ### Provision Docker containers for Redis

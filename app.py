@@ -1,4 +1,4 @@
-# Copyright 2016, 2020 John J. Rofrano. All Rights Reserved.
+# Copyright 2016, 2021 John J. Rofrano. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ from flask import Flask, jsonify, url_for
 ######################################################################
 DEBUG = os.getenv("DEBUG", "False") == "True"
 PORT = os.getenv("PORT", "5000")
+
 # Get Redis ports from environment
 REDIS_SERVICE_HOST = os.getenv("REDIS_SERVICE_HOST", "127.0.0.1")
 REDIS_SERVICE_PORT = os.getenv("REDIS_SERVICE_PORT", "6379")
@@ -68,7 +69,7 @@ def hits():
     except ConnectionError as error:
         error_message = "Cannot contact Redis service: {}".format(error)
         app.logger.error(error_message)
-        return jsonify(error=error_message), 500
+        return jsonify(error=error_message), 503
 
     app.logger.info("Counter is now %s", count)
     return jsonify(hits=count), 200
